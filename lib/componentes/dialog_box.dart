@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
 import 'boton.dart';
 import 'package:dotted_border/dotted_border.dart';
 
-class DialogBox extends StatelessWidget {
+class DialogBox extends StatefulWidget {
   final TextEditingController Fechacontroller;
   final TextEditingController controller;
   final TextEditingController Descripcioncontroller;
@@ -25,17 +24,39 @@ class DialogBox extends StatelessWidget {
   });
 
   @override
+  _DialogBoxState createState() => _DialogBoxState();
+}
+
+class _DialogBoxState extends State<DialogBox> {
+  bool _imagenSeleccionada = false;
+  bool _audioSeleccionado = false;
+
+  void _handleImagenSelection() {
+    widget.onArchivoImagen();
+    setState(() {
+      _imagenSeleccionada = true;
+    });
+  }
+
+  void _handleAudioSelection() {
+    widget.onArchivoAudio();
+    setState(() {
+      _audioSeleccionado = true;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: Colors.white, // Color de fondo corregido
+      backgroundColor: Colors.white,
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
-              controller: Fechacontroller,
-              style: TextStyle(color: Colors.black),
-              decoration: InputDecoration(
+              controller: widget.Fechacontroller,
+              style: const TextStyle(color: Colors.black),
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Fecha',
                 enabledBorder: UnderlineInputBorder(
@@ -47,9 +68,9 @@ class DialogBox extends StatelessWidget {
               ),
             ),
             TextField(
-              controller: controller,
-              style: TextStyle(color: Colors.black),
-              decoration: InputDecoration(
+              controller: widget.controller,
+              style: const TextStyle(color: Colors.black),
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Título',
                 enabledBorder: UnderlineInputBorder(
@@ -61,10 +82,10 @@ class DialogBox extends StatelessWidget {
               ),
             ),
             TextField(
-              maxLength: 65,
-              controller: Descripcioncontroller,
-              style: TextStyle(color: Colors.black),
-              decoration: InputDecoration(
+              maxLength: 75,
+              controller: widget.Descripcioncontroller,
+              style: const TextStyle(color: Colors.black),
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Descripción',
                 enabledBorder: UnderlineInputBorder(
@@ -76,56 +97,82 @@ class DialogBox extends StatelessWidget {
               ),
             ),
             GestureDetector(
-              onTap: onArchivoImagen,
+              onTap: _handleImagenSelection,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 40.0, vertical: 20.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 40.0, vertical: 20.0),
                 child: DottedBorder(
                   borderType: BorderType.RRect,
-                  radius: Radius.circular(10),
-                  dashPattern: [10, 4],
+                  radius: const Radius.circular(10),
+                  dashPattern: const [10, 4],
                   strokeCap: StrokeCap.round,
                   color: Colors.black,
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: Color.fromARGB(255, 133, 192, 23),
+                      color: _imagenSeleccionada
+                          ? Colors.green
+                          : const Color.fromARGB(255, 133, 192, 23),
                     ),
                     height: 100,
                     width: double.infinity,
-                    child: Center(
-                      child: Text(
-                        'Buscar Imagen',
-                        style: TextStyle(
-                            color: const Color.fromARGB(255, 233, 230, 230)),
-                      ),
+                    child: Stack(
+                      children: [
+                        const Center(
+                          child: Text(
+                            'Buscar Imagen',
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 233, 230, 230)),
+                          ),
+                        ),
+                        if (_imagenSeleccionada)
+                          const Positioned(
+                            right: 10,
+                            bottom: 10,
+                            child: Icon(Icons.check, color: Colors.white),
+                          ),
+                      ],
                     ),
                   ),
                 ),
               ),
             ),
             GestureDetector(
-              onTap: onArchivoAudio,
+              onTap: _handleAudioSelection,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 40.0, vertical: 20.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 40.0, vertical: 20.0),
                 child: DottedBorder(
                   borderType: BorderType.RRect,
-                  radius: Radius.circular(10),
-                  dashPattern: [10, 4],
+                  radius: const Radius.circular(10),
+                  dashPattern: const [10, 4],
                   strokeCap: StrokeCap.round,
-                  color: Color.fromARGB(255, 133, 192, 23),
+                  color: const Color.fromARGB(255, 133, 192, 23),
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
-                      color: Color.fromARGB(255, 175, 173, 36),
+                      color: _audioSeleccionado
+                          ? Colors.green
+                          : const Color.fromARGB(255, 175, 173, 36),
                     ),
                     height: 100,
                     width: double.infinity,
-                    child: Center(
-                      child: Text(
-                        'Seleccionar Audio',
-                        style: TextStyle(
-                            color: const Color.fromARGB(255, 233, 230, 230)),
-                      ),
+                    child: Stack(
+                      children: [
+                        const Center(
+                          child: Text(
+                            'Seleccionar Audio',
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 233, 230, 230)),
+                          ),
+                        ),
+                        if (_audioSeleccionado)
+                          const Positioned(
+                            right: 10,
+                            bottom: 10,
+                            child: Icon(Icons.check, color: Colors.white),
+                          ),
+                      ],
                     ),
                   ),
                 ),
@@ -134,8 +181,8 @@ class DialogBox extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                MyButton(onPressed: onSave, text: 'Guardar'),
-                MyButton(onPressed: onCancel, text: 'Cancelar'),
+                MyButton(onPressed: widget.onSave, text: 'Guardar'),
+                MyButton(onPressed: widget.onCancel, text: 'Cancelar'),
               ],
             ),
           ],

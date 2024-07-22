@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'dart:ui';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../data/database.dart';
 import '../componentes/audio_player.dart';
 import '../componentes/dialog_box.dart';
-import '../componentes/todo_tile.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:file_picker/file_picker.dart';
@@ -129,59 +127,95 @@ class _HomePageState extends State<HomePage> {
 
   void showEventDetails(int index) {
     final evento = db.sampleEvento[index];
+    final audioWidget = Audio(
+      aud: evento[4],
+      onStop: () {
+        // Detener el audio al cerrar el diálogo o cuando se detiene manualmente
+      },
+    );
+
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          backgroundColor: const Color.fromARGB(
-              255, 255, 254, 254), // Fondo oscuro del diálogo
-          title: Text(
-            evento[1],
-            style: TextStyle(
-                color: Color.fromARGB(255, 248, 247, 247)), // Título blanco
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (evento[3] != '')
-                Image.file(
-                  File(evento[3]),
-                  fit: BoxFit.cover,
-                ),
-              SizedBox(height: 10),
-              Text(
-                "Fecha: ${evento[0]}",
-                style: TextStyle(
-                    color:
-                        const Color.fromARGB(255, 24, 23, 23)), // Texto blanco
-              ),
-              SizedBox(height: 10),
-              Text(
-                "Título: ${evento[1]}",
-                style: TextStyle(
-                    color:
-                        const Color.fromARGB(255, 19, 18, 18)), // Texto blanco
-              ),
-              SizedBox(height: 10),
-              Text(
-                "Descripción: ${evento[2]}",
-                style: TextStyle(
-                    color:
-                        const Color.fromARGB(255, 20, 20, 20)), // Texto blanco
-              ),
-              SizedBox(height: 10),
-              if (evento[4] != '') Audio(aud: evento[4]),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(
-                "Cerrar",
-                style: TextStyle(color: Colors.white), // Texto blanco del botón
+        // ignore: deprecated_member_use
+        return WillPopScope(
+          onWillPop: () async {
+            audioWidget.onStop!(); // Detiene el audio al cerrar el diálogo
+            return true;
+          },
+          child: AlertDialog(
+            backgroundColor: const Color.fromARGB(255, 255, 254, 254),
+            title: Text(
+              evento[1],
+              style: const TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (evento[3] != '')
+                    Image.file(
+                      File(evento[3]),
+                      fit: BoxFit.cover,
+                    ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    "Fecha:",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 24, 23, 23)),
+                  ),
+                  Text(
+                    evento[0],
+                    style:
+                        const TextStyle(color: Color.fromARGB(255, 24, 23, 23)),
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    "Título:",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 19, 18, 18)),
+                  ),
+                  Text(
+                    evento[1],
+                    style:
+                        const TextStyle(color: Color.fromARGB(255, 19, 18, 18)),
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    "Descripción:",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 20, 20, 20)),
+                  ),
+                  Text(
+                    evento[2],
+                    style:
+                        const TextStyle(color: Color.fromARGB(255, 20, 20, 20)),
+                  ),
+                  const SizedBox(height: 10),
+                  if (evento[4] != '') audioWidget,
+                ],
               ),
             ),
-          ],
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  audioWidget
+                      .onStop!(); // Detener el audio al cerrar el diálogo
+                  Navigator.of(context).pop();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                ),
+                child: const Text(
+                  "Cerrar",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
@@ -190,27 +224,28 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black, // Fondo oscuro
+      backgroundColor: Colors.black,
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Registro de Incidencias'),
-        backgroundColor: Colors.green[800], // Color oscuro para la app bar
+        title: const Text('Registro de Incidencias',
+            style: TextStyle(color: Colors.white70)),
+        backgroundColor: Colors.green[800],
       ),
       drawer: Acercade(onVaciar: vaciarEventos),
       floatingActionButton: FloatingActionButton(
         onPressed: createNewTask,
-        child: Icon(Icons.add),
-        backgroundColor: Colors.green[800], // Color oscuro para el botón
+        backgroundColor: Colors.green[800],
+        child: const Icon(Icons.add),
       ),
       body: ListView.builder(
         itemCount: db.sampleEvento.length,
         itemBuilder: (context, index) {
           final evento = db.sampleEvento[index];
           return Card(
-            margin: EdgeInsets.all(10),
-            color: Colors.grey[800], // Color de la tarjeta
+            margin: const EdgeInsets.all(10),
+            color: Colors.grey[800],
             child: ListTile(
-              contentPadding: EdgeInsets.all(10),
+              contentPadding: const EdgeInsets.all(10),
               leading: evento[3] != ''
                   ? Image.file(
                       File(evento[3]),
@@ -221,14 +256,44 @@ class _HomePageState extends State<HomePage> {
                   : null,
               title: Text(
                 evento[1],
-                style: TextStyle(
-                    color: const Color.fromARGB(
-                        255, 17, 17, 17)), // Texto blanco del título
+                style: const TextStyle(
+                    color: Colors.white70), // Texto blanco del título
               ),
               subtitle: Text(
                 "Fecha: ${evento[0]}",
-                style: TextStyle(
+                style: const TextStyle(
                     color: Colors.white70), // Texto blanco claro del subtítulo
+              ),
+              trailing: IconButton(
+                icon: const Icon(Icons.delete, color: Colors.red),
+                onPressed: () {
+                  // Confirmar la eliminación
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text("Confirmar eliminación"),
+                        content: const Text(
+                            "¿Estás seguro de que deseas eliminar este registro de policia secreto?"),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Cierra el diálogo
+                            },
+                            child: const Text("Cancelar"),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              deleteEvento(index); // Elimina el evento
+                              Navigator.of(context).pop(); // Cierra el diálogo
+                            },
+                            child: const Text("Eliminar"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
               ),
               onTap: () => showEventDetails(index),
             ),

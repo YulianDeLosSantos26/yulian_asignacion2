@@ -3,7 +3,12 @@ import 'package:audioplayers/audioplayers.dart';
 
 class Audio extends StatefulWidget {
   final String aud;
-  Audio({required this.aud});
+  final void Function()? onStop;
+
+  Audio(
+      {required this.aud,
+      this.onStop}); // Añadimos onStop como parámetro opcional
+
   @override
   State<Audio> createState() => _AudioState();
 }
@@ -39,6 +44,18 @@ class _AudioState extends State<Audio> {
         position = newPosition;
       });
     });
+
+    // Reproducir el audio cuando el widget se inicializa
+    player.play(DeviceFileSource(widget.aud));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    player.stop();
+    if (widget.onStop != null) {
+      widget.onStop!(); // Llamar al callback cuando se deshace el widget
+    }
   }
 
   @override
@@ -65,15 +82,17 @@ class _AudioState extends State<Audio> {
                   },
                 ),
               ),
-              SizedBox(
-                width: 20,
-              ),
+              SizedBox(width: 20),
               CircleAvatar(
                 radius: 25,
                 child: IconButton(
                   icon: const Icon(Icons.stop),
                   onPressed: () {
                     player.stop();
+                    if (widget.onStop != null) {
+                      widget
+                          .onStop!(); // Llamar al callback cuando se detiene el audio manualmente
+                    }
                   },
                 ),
               ),
