@@ -15,9 +15,8 @@ class Acercade extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(16.0),
               child: const CircleAvatar(
-                radius: 80, // Ajusta el tamaño del círculo según sea necesario
-                backgroundImage: AssetImage(
-                    'assets/yosoy.jpg'), // Verifica que la ruta sea correcta
+                radius: 80,
+                backgroundImage: AssetImage('assets/yosoy.jpg'),
               ),
             ),
             const SizedBox(height: 20),
@@ -56,7 +55,6 @@ class Acercade extends StatelessWidget {
                 ),
               ),
             ),
-            // Deja un espacio flexible
             SizedBox(height: MediaQuery.of(context).size.height * 0.1),
             Padding(
               padding:

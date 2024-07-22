@@ -5,9 +5,7 @@ class Audio extends StatefulWidget {
   final String aud;
   final void Function()? onStop;
 
-  Audio(
-      {required this.aud,
-      this.onStop}); // Añadimos onStop como parámetro opcional
+  Audio({required this.aud, this.onStop});
 
   @override
   State<Audio> createState() => _AudioState();

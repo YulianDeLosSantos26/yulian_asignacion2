@@ -129,9 +129,7 @@ class _HomePageState extends State<HomePage> {
     final evento = db.sampleEvento[index];
     final audioWidget = Audio(
       aud: evento[4],
-      onStop: () {
-        // Detener el audio al cerrar el diálogo o cuando se detiene manualmente
-      },
+      onStop: () {},
     );
 
     showDialog(
@@ -140,7 +138,8 @@ class _HomePageState extends State<HomePage> {
         // ignore: deprecated_member_use
         return WillPopScope(
           onWillPop: () async {
-            audioWidget.onStop!(); // Detiene el audio al cerrar el diálogo
+            audioWidget
+                .onStop!(); // Esto me sirve para detener la reproduccion de el audio al presionar cerrar la card
             return true;
           },
           child: AlertDialog(
@@ -202,8 +201,7 @@ class _HomePageState extends State<HomePage> {
             actions: [
               ElevatedButton(
                 onPressed: () {
-                  audioWidget
-                      .onStop!(); // Detener el audio al cerrar el diálogo
+                  audioWidget.onStop!();
                   Navigator.of(context).pop();
                 },
                 style: ElevatedButton.styleFrom(
@@ -257,17 +255,19 @@ class _HomePageState extends State<HomePage> {
               title: Text(
                 evento[1],
                 style: const TextStyle(
-                    color: Colors.white70), // Texto blanco del título
+                    color: Colors
+                        .white70), // Texto blanco del título de la card antes de entrar en ella
               ),
               subtitle: Text(
                 "Fecha: ${evento[0]}",
                 style: const TextStyle(
-                    color: Colors.white70), // Texto blanco claro del subtítulo
+                    color: Colors
+                        .white70), // Texto blanco del subtítulo que es la fecha antes de yo entrar en ella
               ),
               trailing: IconButton(
                 icon: const Icon(Icons.delete, color: Colors.red),
                 onPressed: () {
-                  // Confirmar la eliminación
+                  // Confirmacion antes de la eliminación individual de cada evento creado, osea preguntar si quieres eliminar ele evento.
                   showDialog(
                     context: context,
                     builder: (context) {
@@ -278,14 +278,14 @@ class _HomePageState extends State<HomePage> {
                         actions: [
                           TextButton(
                             onPressed: () {
-                              Navigator.of(context).pop(); // Cierra el diálogo
+                              Navigator.of(context).pop();
                             },
                             child: const Text("Cancelar"),
                           ),
                           TextButton(
                             onPressed: () {
-                              deleteEvento(index); // Elimina el evento
-                              Navigator.of(context).pop(); // Cierra el diálogo
+                              deleteEvento(index);
+                              Navigator.of(context).pop();
                             },
                             child: const Text("Eliminar"),
                           ),

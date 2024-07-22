@@ -68,9 +68,7 @@ class ToDoTile extends StatelessWidget {
             Container(
               child: Audio(
                 aud: audio,
-                onStop: () {
-                  // Puedes realizar alguna acción adicional aquí si lo deseas.
-                },
+                onStop: () {},
               ),
             ),
           ],
