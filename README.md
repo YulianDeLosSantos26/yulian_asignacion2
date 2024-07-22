@@ -2,6 +2,8 @@
 
 A new Flutter project.
 
+- [App: Link de descarga de la app](https://drive.google.com/file/d/1_IlLBPgcd6D9_DGvqm6s58x3XFJdJ4nP/view?usp=sharing)
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
